@@ -1,4 +1,4 @@
-# Agente de Prospección B2B con IA (Hibrids)
+# Agente de Prospección B2B con IA 
 
 ## Descripción General
 
