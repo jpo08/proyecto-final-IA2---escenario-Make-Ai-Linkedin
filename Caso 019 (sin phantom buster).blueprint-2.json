@@ -1,0 +1,299 @@
+{
+    "name": "Caso 019 (sin phantom buster)",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 2415397,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": {
+                            "data": {
+                                "editable": "true"
+                            },
+                            "label": "Agente Híbrids"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "empresa",
+                        "type": "text"
+                    },
+                    {
+                        "name": "rol",
+                        "type": "text"
+                    },
+                    {
+                        "name": "linkedin",
+                        "type": "text"
+                    },
+                    {
+                        "name": "categoria",
+                        "type": "text"
+                    },
+                    {
+                        "name": "tematica",
+                        "type": "text"
+                    },
+                    {
+                        "name": "pais",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 31,
+            "module": "gemini-ai:simpleTextPrompt",
+            "version": 1,
+            "parameters": {},
+            "filter": null,
+            "mapper": {
+                "model": "gemini-2.5-flash",
+                "textPrompt": "Eres un Research Assistant especializado en prospección B2B.\n\nDATOS DE ENTRADA:\n- Empresa: {{1.empresa}}\n- Categoría: {{1.categoria}}\n- Temática: {{1.tematica}}\n- País/Región: {{1.pais}}\n- Rol del perfil objetivo: {{1.rol}}\n- LinkedIn de referencia: {{1.linkedin}}\n\nTAREA: Investiga esta empresa y devuelve la información en formato JSON con esta estructura exacta:\n\n{\n  \"empresa\": \"nombre\",\n  \"inversion_categoria\": \"monto o descripción de inversión recibida en esta categoría\",\n  \"revenue_estimado\": \"revenue anual estimado en USD\",\n  \"kpis_relevantes\": [\"kpi1\", \"kpi2\", \"kpi3\"],\n  \"vision_empresa\": \"descripción de la visión estratégica\",\n  \"que_hacen_en_categoria\": \"descripción de su actividad en la categoría\",\n  \"competidores\": [\n    {\"nombre\": \"competidor\", \"que_hacen\": \"descripción\"}\n  ],\n  \"alineacion_con_ai_crm\": \"alta/media/baja y por qué\",\n  \"fuentes\": [\"url1\", \"url2\"]\n}\n\nResponde ÚNICAMENTE con el JSON, sin texto adicional."
+            },
+            "metadata": {
+                "designer": {
+                    "x": 413,
+                    "y": -2,
+                    "name": "Research assistant"
+                },
+                "restore": {
+                    "expect": {
+                        "model": {
+                            "label": "Gemini 2.5 FlashApplies smart reasoning to fast data tasks while ensuring quick response times"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "gemini-3.5-flash",
+                                "gemini-3.1-pro-preview",
+                                "gemini-3-flash-preview",
+                                "gemini-2.5-pro",
+                                "gemini-2.5-flash"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "textPrompt",
+                        "type": "text",
+                        "label": "Text prompt",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 32,
+            "module": "gemini-ai:simpleTextPrompt",
+            "version": 1,
+            "parameters": {},
+            "filter": null,
+            "mapper": {
+                "model": "gemini-2.5-flash",
+                "textPrompt": "Eres un Scraping Assistant especializado en identificar perfiles clave en LinkedIn.\n\nCONTEXTO DE LA EMPRESA (del research anterior):\n{{31.result}}\n\nDATOS DE ENTRADA:\n- Empresa objetivo: {{1.empresa}}\n- Rol que busco: {{1.rol}}\n- LinkedIn de referencia: {{1.linkedin}}\n- País: {{1.pais}}\n\nTAREA: Busca en LinkedIn y web pública perfiles de personas con el rol \"{{1.rol}}\" \nen la empresa \"{{1.empresa}}\". Para cada perfil encontrado devuelve este JSON:\n\n{\n  \"perfiles\": [\n    {\n      \"nombre\": \"nombre completo\",\n      \"rol_actual\": \"título exacto\",\n      \"años_en_empresa\": \"número aproximado\",\n      \"linkedin_url\": \"url del perfil\",\n      \"publicaciones_recientes\": [\"tema1\", \"tema2\"],\n      \"responsabilidades_clave\": [\"resp1\", \"resp2\", \"resp3\"],\n      \"señales_de_interes\": \"qué indica que puede estar interesado en nuestra solución\"\n    }\n  ],\n  \"total_perfiles\": 0\n}\n\nResponde ÚNICAMENTE con el JSON, sin texto adicional."
+            },
+            "metadata": {
+                "designer": {
+                    "x": 809,
+                    "y": -12,
+                    "name": "Scraping"
+                },
+                "restore": {
+                    "expect": {
+                        "model": {
+                            "label": "Gemini 2.5 FlashApplies smart reasoning to fast data tasks while ensuring quick response times"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "gemini-3.5-flash",
+                                "gemini-3.1-pro-preview",
+                                "gemini-3-flash-preview",
+                                "gemini-2.5-pro",
+                                "gemini-2.5-flash"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "textPrompt",
+                        "type": "text",
+                        "label": "Text prompt",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 33,
+            "module": "anthropic-claude:simpleTextPrompt",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "model": "claude-sonnet-4-5",
+                "max_tokens": "1000",
+                "textPrompt": "Eres un Reasoning Assistant de prospección B2B para la empresa Hibrids, \nque vende soluciones de AI aplicada a CRM, datos y procesos comerciales.\n\nRESEARCH DE LA EMPRESA:\n{{31.result}}\n\nPERFILES ENCONTRADOS EN LINKEDIN:\n{{32.result}}\n\nDATOS ORIGINALES:\n- Empresa: {{1.empresa}}\n- Categoría: {{1.categoria}}\n- País: {{1.pais}}\n\nTAREA: Evalúa cada perfil y devuelve este JSON:\n\n{\n  \"evaluacion\": [\n    {\n      \"nombre\": \"nombre del perfil\",\n      \"alineacion_vision\": \"alta/media/baja\",\n      \"justificacion_alineacion\": \"por qué este perfil encaja con la visión de Hibrids\",\n      \"es_contacto_existente\": false,\n      \"cuantos_alineados_en_empresa\": \"número estimado de personas con visión similar en esa empresa\",\n      \"señales_positivas\": [\"señal1\", \"señal2\"],\n      \"señales_negativas\": [\"riesgo1\"],\n      \"recomendacion\": \"contactar urgente / contactar / monitorear / descartar\"\n    }\n  ],\n  \"resumen_empresa\": \"conclusión general sobre el potencial de esta empresa como cliente\"\n}\n\nResponde ÚNICAMENTE con el JSON, sin texto adicional."
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1145,
+                    "y": -15,
+                    "name": "Reasoning"
+                },
+                "restore": {
+                    "expect": {
+                        "model": {
+                            "label": "Claude Sonnet 4.5The most reliable and intelligent general purpose model for complex questions, coding, and everyday problem-solving"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "claude-opus-4-8",
+                                "claude-opus-4-7",
+                                "claude-sonnet-4-6",
+                                "claude-opus-4-6",
+                                "claude-sonnet-4-5",
+                                "claude-haiku-4-5",
+                                "claude-opus-4-5"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "textPrompt",
+                        "type": "text",
+                        "label": "Text Prompt",
+                        "required": true
+                    },
+                    {
+                        "name": "max_tokens",
+                        "type": "uinteger",
+                        "label": "Max Tokens",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 34,
+            "module": "anthropic-claude:simpleTextPrompt",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "model": "claude-sonnet-4-5",
+                "textPrompt": "Ignora los bloques de código markdown (```json) en los datos que recibes. Procesa el contenido como JSON puro.\n\nEres un Scoring Assistant. Tu trabajo es puntuar cada prospecto con base \nen criterios específicos de calificación de Hibrids.\n\nREASONING PREVIO:\n{{33.result}}\n\nRESEARCH DE LA EMPRESA:\n{{31.result}}\n\nCRITERIOS DE SCORING (cada uno vale hasta 25 puntos, total máximo 100):\n1. VISIÓN HIBRIDS (0-25): ¿La empresa ha invertido o ejecutado proyectos similares a lo que hace Hibrids?\n2. ALINEACIÓN ESTRATÉGICA (0-25): ¿El perfil comparte una visión compatible con AI aplicada a ventas/CRM?\n3. INFLUENCIA (0-25): ¿El perfil tiene poder de decisión o influencia real sobre compras de tecnología?\n4. TAMAÑO Y CAPACIDAD (0-25): ¿La inversión de la empresa supera 1MDD y el revenue supera 500MDD?\n\nTAREA: Devuelve este JSON:\n\n{\n  \"scoring_final\": [\n    {\n      \"nombre\": \"nombre del perfil\",\n      \"linkedin_url\": \"url\",\n      \"rol_actual\": \"título\",\n      \"puntos_vision_hibrids\": 0,\n      \"puntos_alineacion\": 0,\n      \"puntos_influencia\": 0,\n      \"puntos_tamano\": 0,\n      \"score_total\": 0,\n      \"nivel\": \"A (80-100) / B (60-79) / C (40-59) / D (menos de 40)\",\n      \"motivo_score\": \"explicación breve del score\",\n      \"accion_recomendada\": \"qué hacer con este contacto\"\n    }\n  ],\n  \"contacto_principal\": \"nombre del perfil con mayor score\",\n  \"score_empresa\": 0,\n  \"reporte_resumen\": \"párrafo ejecutivo de 3-4 líneas para el vendedor\"\n}\n\nResponde ÚNICAMENTE con el JSON puro, sin bloques markdown, sin ``` , sin texto adicional.",
+                "max_tokens": "1000"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1495,
+                    "y": -16,
+                    "name": "Scoring"
+                },
+                "restore": {
+                    "expect": {
+                        "model": {
+                            "label": "Claude Sonnet 4.5The most reliable and intelligent general purpose model for complex questions, coding, and everyday problem-solving"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "claude-opus-4-8",
+                                "claude-opus-4-7",
+                                "claude-sonnet-4-6",
+                                "claude-opus-4-6",
+                                "claude-sonnet-4-5",
+                                "claude-haiku-4-5",
+                                "claude-opus-4-5"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "textPrompt",
+                        "type": "text",
+                        "label": "Text Prompt",
+                        "required": true
+                    },
+                    {
+                        "name": "max_tokens",
+                        "type": "uinteger",
+                        "label": "Max Tokens",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com",
+        "notes": []
+    }
+}
